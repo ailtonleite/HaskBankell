@@ -11,6 +11,10 @@ addUsuario user users | isJust (find (\x -> userid x == userid user) users) = us
                       | otherwise = user : users
 
 -- remover usuario
+removeUsuario :: Integer -> [User] -> [User]
+removeUsuario id users | isJust (find (\x -> userid x == id) users) = delete user users
+                       | otherwise = users
+
 -- salvar a lista de usuarios em um arquivo (talvez json)
 -- transferir saldo
--- transferir parcelado
+-- transferir parcelado** (para a segunda parte)
