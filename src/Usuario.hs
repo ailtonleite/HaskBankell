@@ -1,7 +1,7 @@
-module Usuario (User(..), addUsuario) where
+module Usuario (User(..), addUsuario, removeUsuario) where
 
-import Data.List (find)
-import Data.Maybe (isJust)
+import Data.List (find, delete)
+import Data.Maybe (isJust, fromJust)
 
 data User = User { userid :: Integer, nome :: String, saldo :: Float, saldoDevedor :: Float } deriving (Show, Eq)
 
@@ -12,8 +12,9 @@ addUsuario user users | isJust (find (\x -> userid x == userid user) users) = us
 
 -- remover usuario
 removeUsuario :: Integer -> [User] -> [User]
-removeUsuario id users | isJust (find (\x -> userid x == id) users) = delete user users
+removeUsuario uid users | isJust user = delete (fromJust user) users
                        | otherwise = users
+                       where user = find (\x -> userid x == uid) users
 
 -- salvar a lista de usuarios em um arquivo (talvez json)
 -- transferir saldo

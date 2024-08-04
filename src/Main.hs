@@ -11,7 +11,8 @@ printMenu = do
   putStrLn "Escolha uma opção:"
   putStrLn "1 - Adicionar usuário"
   putStrLn "2 - Exibir usuários"
-  putStrLn "3 - Sair"
+  putStrLn "2 - Remover usuário"
+  putStrLn "4 - Sair"
   putStrLn "-- HaskBankell - UFABC --"
 
 -- Função de loop principal
@@ -43,6 +44,13 @@ mainInterface users = do
       mapM_ print users
       mainInterface users
     "3" -> do
+      putStr "codigo identificador do usuário a ser removido: "
+      hFlush stdout
+      userid <- readLn :: IO Integer
+      let newUsers = removeUsuario userid users
+      putStrLn "Usuário removido."
+      mainInterface newUsers
+    "4" -> do
       putStrLn "Saindo..."
       return ()
     _ -> do
