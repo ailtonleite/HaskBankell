@@ -1,7 +1,8 @@
 module Main (main) where
 
-import Usuario
-import System.IO (hFlush, stdout)
+import Usuario (addUsuario, removeUsuario, User(User), carregaArquivo, salvaUsuario)
+import System.IO (hFlush, stdout, IOMode (ReadWriteMode))
+import Data.Maybe
 
 main :: IO ()
 main = mainInterface []
@@ -15,9 +16,17 @@ printMenu = do
   putStrLn "4 - Sair"
   putStrLn "-- HaskBankell - UFABC --"
 
--- Função de loop principal
+-- aqui ficara a interface
+-- OBS:
+-- Alguns dos recursos como "mapM" para listagem dos itens da lista, pre-carregamento
+-- de usuários ja salvs anterioremnte e readLn foram consultadas via chatGPT
+-- mas a ferramenta foi usada apenas para entender e observar seu funcionamento
+-- em outros exemplos para poder aplicar em nosso projeto.
 mainInterface :: [User] -> IO ()
 mainInterface users = do
+  maybeUser <- carregaArquivo "./db/User.json"
+  let users' = Data.Maybe.fromMaybe [] maybeUser
+
   printMenu
   putStr "Opção: "
   hFlush stdout
@@ -36,26 +45,33 @@ mainInterface users = do
       putStr "Saldo devedor do usuário: "
       hFlush stdout
       saldoDevedor <- readLn :: IO Float
-      let newUsers = addUsuario (User userid nome saldo saldoDevedor) users
+      let newUsers = addUsuario (User userid nome saldo saldoDevedor) users'
+      salvaUsuario "./db/User.json" newUsers
       putStrLn "Usuário adicionado."
       mainInterface newUsers
+
     "2" -> do
       putStrLn "Lista de usuários:"
       mapM_ print users
       mainInterface users
+
     "3" -> do
       putStr "codigo identificador do usuário a ser removido: "
       hFlush stdout
       userid <- readLn :: IO Integer
-      let newUsers = removeUsuario userid users
+      let newUsers = removeUsuario userid users'
+      salvaUsuario "./db/User.json" newUsers
       putStrLn "Usuário removido."
       mainInterface newUsers
+
     "4" -> do
+
       putStrLn "Saindo..."
       return ()
+
     _ -> do
       putStrLn "Erro: Opção invalida"
       mainInterface users
 
-  
+
   --aqui ficara a interface
