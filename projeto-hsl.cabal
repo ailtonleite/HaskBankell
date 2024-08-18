@@ -19,8 +19,9 @@ executable projeto-hsl
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5, aeson, bytestring, directory
+  build-depends:       base >= 4.7 && < 5, aeson, bytestring, directory, HUnit
   extensions:          DeriveGeneric
+  other-modules:       Usuario
   ghc-options:         -Wall
                        -Wcompat
                        -Widentities
@@ -30,3 +31,18 @@ executable projeto-hsl
                        -Wmissing-home-modules
                        -Wpartial-fields
                        -Wredundant-constraints
+                       -Wmissing-home-modules
+
+test-suite my-tests
+  type: exitcode-stdio-1.0
+  main-is: Testes.hs
+  hs-source-dirs: test, src  
+  other-modules: Usuario 
+  build-depends:
+    base >= 4.7 && < 5,
+    HUnit
+  default-language: Haskell2010
+
+
+
+

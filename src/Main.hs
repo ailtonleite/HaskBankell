@@ -1,7 +1,7 @@
 module Main (main) where
 
 import Usuario (addUsuario, removeUsuario, User(User), carregaArquivo, salvaUsuario, transferirSaldo)
-import System.IO (hFlush, stdout, IOMode (ReadWriteMode))
+import System.IO (hFlush, stdout)
 import Data.Maybe
 import Text.Read (readMaybe)
 
@@ -71,7 +71,7 @@ mainInterface users = do
                   putStrLn "Usuário adicionado."
                   putStrLn " "
                   mainInterface newUsers
-
+                  
     "2" -> do
       putStrLn "Lista de usuários:"
       mapM_ print users
@@ -79,7 +79,7 @@ mainInterface users = do
       mainInterface users
 
     "3" -> do
-      putStr "codigo identificador do usuário a ser removido: "
+      putStr "Código identificador do usuário a ser removido: "
       hFlush stdout
       userid <- readLn :: IO Integer
       let newUsers = removeUsuario userid users'
@@ -114,9 +114,6 @@ mainInterface users = do
       return ()
 
     _ -> do
-      putStrLn "Erro: Opção invalida"
+      putStrLn "Erro: Opção inválida"
       putStrLn " "
       mainInterface users
-
-
-  --aqui ficara a interface

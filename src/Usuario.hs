@@ -32,12 +32,13 @@ carregaArquivo arquivo = do
             conteudo <- Byte.readFile arquivo
             return (decodeStrict' conteudo)
 
--- Verifica se o usuário já existe, caso contrario adicionalo a lista
+-- Verifica se o usuário já existe, caso contrário, adiciona-o à lista
 addUsuario :: User -> [User] -> [User]
-addUsuario user users | isJust (find (\x -> userid x == userid user) users) = users
-                      | otherwise = user : users
+addUsuario user users
+  | isJust (find (\x -> userid x == userid user) users) = users
+  | otherwise = user : users
 
--- remover usuario
+-- Remove usuário
 removeUsuario :: Integer -> [User] -> [User]
 removeUsuario uid users | isJust user = delete (fromJust user) users
                         | otherwise = users
@@ -61,6 +62,5 @@ transferirSaldo fromId toId amount users
       | userid user == fromId = user { saldo = saldo user - amount }
       | userid user == toId = user { saldo = saldo user + amount }
       | otherwise = user
-
 
 -- transferir parcelado** (para a segunda parte)
