@@ -1,7 +1,8 @@
 module Main (main) where
 
-import Usuario
+import Usuario (addUsuario, removeUsuario, User(User), carregaArquivo, salvaUsuario, transferirSaldo)
 import System.IO (hFlush, stdout)
+import Data.Maybe
 import Text.Read (readMaybe)
 
 main :: IO ()
@@ -18,9 +19,17 @@ printMenu = do
   putStrLn "-- HaskBankell - UFABC --"
   putStrLn " "
 
--- Função de loop principal
+-- aqui ficara a interface
+-- OBS:
+-- Alguns dos recursos como "mapM" para listagem dos itens da lista, pre-carregamento
+-- de usuários ja salvs anterioremnte e readLn foram consultadas via chatGPT
+-- mas a ferramenta foi usada apenas para entender e observar seu funcionamento
+-- em outros exemplos para poder aplicar em nosso projeto.
 mainInterface :: [User] -> IO ()
 mainInterface users = do
+  maybeUser <- carregaArquivo "./db/User.json"
+  let users' = Data.Maybe.fromMaybe [] maybeUser
+
   printMenu
   putStr "Opção: "
   hFlush stdout
@@ -57,23 +66,28 @@ mainInterface users = do
                   putStrLn "Erro: Saldo devedor inválido. Deve ser um número."
                   mainInterface users
                 Just sd -> do
-                  let newUsers = addUsuario (User uid nome s sd) users
+                  let newUsers = addUsuario (User uid nome s sd) users'
+                  salvaUsuario "./db/User.json" newUsers
                   putStrLn "Usuário adicionado."
                   putStrLn " "
                   mainInterface newUsers
+                  
     "2" -> do
       putStrLn "Lista de usuários:"
       mapM_ print users
       putStrLn " "
       mainInterface users
+
     "3" -> do
       putStr "Código identificador do usuário a ser removido: "
       hFlush stdout
       userid <- readLn :: IO Integer
-      let newUsers = removeUsuario userid users
+      let newUsers = removeUsuario userid users'
+      salvaUsuario "./db/User.json" newUsers
       putStrLn "Usuário removido."
       putStrLn " "
       mainInterface newUsers
+
     "4" -> do
       putStr "Código identificador do usuário remetente: "
       hFlush stdout
@@ -90,12 +104,15 @@ mainInterface users = do
           putStrLn err
           mainInterface users
         Right newUsers -> do
+          salvaUsuario "./db/User.json" newUsers
           putStrLn "Transferência realizada com sucesso."
           putStrLn " "
           mainInterface newUsers
+
     "5" -> do
       putStrLn "Saindo..."
       return ()
+
     _ -> do
       putStrLn "Erro: Opção inválida"
       putStrLn " "
