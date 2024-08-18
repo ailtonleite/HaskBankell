@@ -47,7 +47,7 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 bindir     = "/home/lucas/HaskBankell/.stack-work/install/x86_64-linux/bc49cac8272e6412b33aff4365e46bbbdb2c7207c032b8f4dab377f99f95041f/9.6.6/bin"
-libdir     = "/home/lucas/HaskBankell/.stack-work/install/x86_64-linux/bc49cac8272e6412b33aff4365e46bbbdb2c7207c032b8f4dab377f99f95041f/9.6.6/lib/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0-8pX6qsjne416Xvxyso2I3N-projeto-hsl"
+libdir     = "/home/lucas/HaskBankell/.stack-work/install/x86_64-linux/bc49cac8272e6412b33aff4365e46bbbdb2c7207c032b8f4dab377f99f95041f/9.6.6/lib/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0-7J8DKEoBfcY82R0B7hBOYp-my-tests"
 dynlibdir  = "/home/lucas/HaskBankell/.stack-work/install/x86_64-linux/bc49cac8272e6412b33aff4365e46bbbdb2c7207c032b8f4dab377f99f95041f/9.6.6/lib/x86_64-linux-ghc-9.6.6"
 datadir    = "/home/lucas/HaskBankell/.stack-work/install/x86_64-linux/bc49cac8272e6412b33aff4365e46bbbdb2c7207c032b8f4dab377f99f95041f/9.6.6/share/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"
 libexecdir = "/home/lucas/HaskBankell/.stack-work/install/x86_64-linux/bc49cac8272e6412b33aff4365e46bbbdb2c7207c032b8f4dab377f99f95041f/9.6.6/libexec/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"

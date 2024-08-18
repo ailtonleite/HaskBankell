@@ -123,7 +123,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "projeto-hsl-0.1.0.0-8pX6qsjne416Xvxyso2I3N-projeto-hsl"
+#define CURRENT_COMPONENT_ID "projeto-hsl-0.1.0.0-7J8DKEoBfcY82R0B7hBOYp-my-tests"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

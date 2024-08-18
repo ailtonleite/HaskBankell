@@ -16,6 +16,7 @@ printMenu = do
   putStrLn "4 - Transferir saldo"
   putStrLn "5 - Sair"
   putStrLn "-- HaskBankell - UFABC --"
+  putStrLn " "
 
 -- Função de loop principal
 mainInterface :: [User] -> IO ()
@@ -58,10 +59,12 @@ mainInterface users = do
                 Just sd -> do
                   let newUsers = addUsuario (User uid nome s sd) users
                   putStrLn "Usuário adicionado."
+                  putStrLn " "
                   mainInterface newUsers
     "2" -> do
       putStrLn "Lista de usuários:"
       mapM_ print users
+      putStrLn " "
       mainInterface users
     "3" -> do
       putStr "Código identificador do usuário a ser removido: "
@@ -69,6 +72,7 @@ mainInterface users = do
       userid <- readLn :: IO Integer
       let newUsers = removeUsuario userid users
       putStrLn "Usuário removido."
+      putStrLn " "
       mainInterface newUsers
     "4" -> do
       putStr "Código identificador do usuário remetente: "
@@ -87,10 +91,12 @@ mainInterface users = do
           mainInterface users
         Right newUsers -> do
           putStrLn "Transferência realizada com sucesso."
+          putStrLn " "
           mainInterface newUsers
     "5" -> do
       putStrLn "Saindo..."
       return ()
     _ -> do
       putStrLn "Erro: Opção inválida"
+      putStrLn " "
       mainInterface users

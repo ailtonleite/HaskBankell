@@ -27,10 +27,10 @@ removeUsuario uid users
 -- Função para transferir saldo de um usuário para outro
 transferirSaldo :: Integer -> Integer -> Float -> [User] -> Either String [User]
 transferirSaldo fromId toId amount users
-  | amount <= 0 = Left "Erro: O valor da transferência deve ser maior que zero."
-  | isNothing fromUser = Left "Erro: Usuário remetente não encontrado."
-  | isNothing toUser = Left "Erro: Usuário destinatário não encontrado."
-  | saldo (fromJust fromUser) < amount = Left "Erro: Saldo insuficiente para transferência."
+  | amount <= 0 = Left $ "Erro: O valor da transferência deve ser maior que zero."
+  | isNothing fromUser = Left $ "Erro: Usuário remetente com ID " ++ show fromId ++ " não encontrado."
+  | isNothing toUser = Left $ "Erro: Usuário destinatário com ID " ++ show toId ++ " não encontrado."
+  | saldo (fromJust fromUser) < amount = Left $ "Erro: Saldo insuficiente para transferência."
   | otherwise = Right updatedUsers
   where
     fromUser = find (\x -> userid x == fromId) users

@@ -123,8 +123,11 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "projeto-hsl-0.1.0.0-8pX6qsjne416Xvxyso2I3N-projeto-hsl"
+#define CURRENT_COMPONENT_ID "projeto-hsl-0.1.0.0-7J8DKEoBfcY82R0B7hBOYp-projeto-hsl"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
 #endif /* CURRENT_PACKAGE_VERSION */
+
+#undef CURRENT_PACKAGE_KEY
+#undef CURRENT_COMPONENT_ID
