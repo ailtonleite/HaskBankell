@@ -1,7 +1,7 @@
-module Usuario (User(..), addUsuario, removeUsuario, carregaArquivo, salvaUsuario) where
+module Usuario (User(..), addUsuario, removeUsuario, carregaArquivo, salvaUsuario, transferirSaldo) where
 
 import Data.List (find, delete)
-import Data.Maybe (isJust, fromJust)
+import Data.Maybe (isJust, fromJust, isNothing)
 import Data.Aeson (ToJSON, FromJSON, encode, decodeStrict')
 --import qualified Data.ByteString.Lazy as Byte
 import qualified Data.ByteString as Byte
@@ -44,4 +44,23 @@ removeUsuario uid users | isJust user = delete (fromJust user) users
                         where user = find (\x -> userid x == uid) users
 
 -- transferir saldo
+-- Função para transferir saldo de um usuário para outro
+transferirSaldo :: Integer -> Integer -> Float -> [User] -> Either String [User]
+transferirSaldo fromId toId amount users
+  | amount <= 0 = Left $ "Erro: O valor da transferência deve ser maior que zero."
+  | isNothing fromUser = Left $ "Erro: Usuário remetente com ID " ++ show fromId ++ " não encontrado."
+  | isNothing toUser = Left $ "Erro: Usuário destinatário com ID " ++ show toId ++ " não encontrado."
+  | saldo (fromJust fromUser) < amount = Left $ "Erro: Saldo insuficiente para transferência."
+  | otherwise = Right updatedUsers
+  where
+    fromUser = find (\x -> userid x == fromId) users
+    toUser = find (\x -> userid x == toId) users
+    updatedUsers = map updateUser users
+
+    updateUser user
+      | userid user == fromId = user { saldo = saldo user - amount }
+      | userid user == toId = user { saldo = saldo user + amount }
+      | otherwise = user
+
+
 -- transferir parcelado** (para a segunda parte)
