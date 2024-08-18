@@ -47,7 +47,7 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 bindir     = "/home/ailton/ufabc/projeto-hsl/.stack-work/install/x86_64-linux/cce98880a57214800d17e0ee4df832f570cc6b09fa46ac01b3f9c230bbed2e98/9.6.6/bin"
-libdir     = "/home/ailton/ufabc/projeto-hsl/.stack-work/install/x86_64-linux/cce98880a57214800d17e0ee4df832f570cc6b09fa46ac01b3f9c230bbed2e98/9.6.6/lib/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0-17VAjiMGqIRbusBJBEZCO-projeto-hsl"
+libdir     = "/home/ailton/ufabc/projeto-hsl/.stack-work/install/x86_64-linux/cce98880a57214800d17e0ee4df832f570cc6b09fa46ac01b3f9c230bbed2e98/9.6.6/lib/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0-7J8DKEoBfcY82R0B7hBOYp-projeto-hsl"
 dynlibdir  = "/home/ailton/ufabc/projeto-hsl/.stack-work/install/x86_64-linux/cce98880a57214800d17e0ee4df832f570cc6b09fa46ac01b3f9c230bbed2e98/9.6.6/lib/x86_64-linux-ghc-9.6.6"
 datadir    = "/home/ailton/ufabc/projeto-hsl/.stack-work/install/x86_64-linux/cce98880a57214800d17e0ee4df832f570cc6b09fa46ac01b3f9c230bbed2e98/9.6.6/share/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"
 libexecdir = "/home/ailton/ufabc/projeto-hsl/.stack-work/install/x86_64-linux/cce98880a57214800d17e0ee4df832f570cc6b09fa46ac01b3f9c230bbed2e98/9.6.6/libexec/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"
