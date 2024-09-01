@@ -50,6 +50,16 @@
   (major1) == 0 && (major2) <  11 || \
   (major1) == 0 && (major2) == 11 && (minor) <= 5)
 #endif /* MIN_VERSION_bytestring */
+/* package cryptohash-0.11.9 */
+#ifndef VERSION_cryptohash
+#define VERSION_cryptohash "0.11.9"
+#endif /* VERSION_cryptohash */
+#ifndef MIN_VERSION_cryptohash
+#define MIN_VERSION_cryptohash(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  11 || \
+  (major1) == 0 && (major2) == 11 && (minor) <= 9)
+#endif /* MIN_VERSION_cryptohash */
 /* package directory-1.3.8.5 */
 #ifndef VERSION_directory
 #define VERSION_directory "1.3.8.5"
@@ -61,6 +71,16 @@
   (major1) == 1 && (major2) == 3 && (minor) <= 8)
 #endif /* MIN_VERSION_directory */
 
+/* tool alex-3.4.0.1 */
+#ifndef TOOL_VERSION_alex
+#define TOOL_VERSION_alex "3.4.0.1"
+#endif /* TOOL_VERSION_alex */
+#ifndef MIN_TOOL_VERSION_alex
+#define MIN_TOOL_VERSION_alex(major1,major2,minor) (\
+  (major1) <  3 || \
+  (major1) == 3 && (major2) <  4 || \
+  (major1) == 3 && (major2) == 4 && (minor) <= 0)
+#endif /* MIN_TOOL_VERSION_alex */
 /* tool gcc-11 */
 #ifndef TOOL_VERSION_gcc
 #define TOOL_VERSION_gcc "11"
@@ -101,6 +121,16 @@
   (major1) == 2 && (major2) <  29 || \
   (major1) == 2 && (major2) == 29 && (minor) <= 2)
 #endif /* MIN_TOOL_VERSION_haddock */
+/* tool happy-1.20.1.1 */
+#ifndef TOOL_VERSION_happy
+#define TOOL_VERSION_happy "1.20.1.1"
+#endif /* TOOL_VERSION_happy */
+#ifndef MIN_TOOL_VERSION_happy
+#define MIN_TOOL_VERSION_happy(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  20 || \
+  (major1) == 1 && (major2) == 20 && (minor) <= 1)
+#endif /* MIN_TOOL_VERSION_happy */
 /* tool hpc-0.68 */
 #ifndef TOOL_VERSION_hpc
 #define TOOL_VERSION_hpc "0.68"
@@ -153,7 +183,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "projeto-hsl-0.1.0.0-3QOA2LbJvCvLj31nCvOqyq-projeto-hsl"
+#define CURRENT_COMPONENT_ID "projeto-hsl-0.1.0.0-8anKp6wdear3sDyQ2x9U30-projeto-hsl"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
