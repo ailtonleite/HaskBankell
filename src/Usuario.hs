@@ -3,12 +3,13 @@ module Usuario (User(..), addUsuario, removeUsuario, carregaArquivo, salvaUsuari
 import Data.List (find, delete)
 import Data.Maybe (isJust, fromJust, isNothing)
 import Data.Aeson (ToJSON, FromJSON, encode, decodeStrict')
---import qualified Data.ByteString.Lazy as Byte
 import qualified Data.ByteString as Byte
+import qualified Data.ByteString.Char8 as B
 import GHC.Generics (Generic)
 import System.Directory (doesFileExist)
+import Crypto.Hash (hash, SHA256(..), Digest)
 
-data User = User { userid :: Integer, nome :: String, saldo :: Float, saldoDevedor :: Float } deriving (Show, Eq, Generic)
+data User = User { userid :: Integer, nome :: String, saldo :: Float, saldoDevedor :: Float, senha :: String } deriving (Show, Eq, Generic)
 
 -- OBS: Para as funções de salvamento e garregamento de dados dos usuarios
 -- em um arquivo, foi utilizado a lib aeson na qual seu funcionamento foi
@@ -18,6 +19,9 @@ data User = User { userid :: Integer, nome :: String, saldo :: Float, saldoDeved
 
 instance ToJSON User
 instance FromJSON User
+
+hashSenha :: String -> String
+hashSenha usenha = show (hash (B.pack usenha) :: Digest SHA256)
 
 -- salvar a lista de usuarios em um arquivo (talvez json)
 salvaUsuario :: FilePath -> [User] -> IO ()
@@ -36,26 +40,31 @@ carregaArquivo arquivo = do
 addUsuario :: User -> [User] -> [User]
 addUsuario user users
   | isJust (find (\x -> userid x == userid user) users) = users
-  | otherwise = user : users
+  | otherwise = user { senha = hashSenha (senha user) } : users
 
 -- Remove usuário
-removeUsuario :: Integer -> [User] -> [User]
-removeUsuario uid users | isJust user = delete (fromJust user) users
-                        | otherwise = users
-                        where user = find (\x -> userid x == uid) users
+removeUsuario :: Integer -> String -> [User] -> Maybe [User]
+removeUsuario uid usenha users
+  | isJust user && senhaCorreta = Just $ delete (fromJust user) users
+  | otherwise = Nothing
+  where
+    user = find (\x -> userid x == uid) users
+    senhaCorreta = hashSenha usenha == senha (fromJust user)
 
 -- transferir saldo
 -- Função para transferir saldo de um usuário para outro
-transferirSaldo :: Integer -> Integer -> Float -> [User] -> Either String [User]
-transferirSaldo fromId toId amount users
+transferirSaldo :: Integer -> String -> Integer -> Float -> [User] -> Either String [User]
+transferirSaldo fromId usenha toId amount users
   | amount <= 0 = Left $ "Erro: O valor da transferência deve ser maior que zero."
   | isNothing fromUser = Left $ "Erro: Usuário remetente com ID " ++ show fromId ++ " não encontrado."
   | isNothing toUser = Left $ "Erro: Usuário destinatário com ID " ++ show toId ++ " não encontrado."
+  | not (senhaCorreta fromUser) = Left $ "Erro: Senha incorreta para o usuário remetente."
   | saldo (fromJust fromUser) < amount = Left $ "Erro: Saldo insuficiente para transferência."
   | otherwise = Right updatedUsers
   where
     fromUser = find (\x -> userid x == fromId) users
     toUser = find (\x -> userid x == toId) users
+    senhaCorreta user = hashSenha usenha == senha (fromJust user)
     updatedUsers = map updateUser users
 
     updateUser user

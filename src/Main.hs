@@ -66,7 +66,10 @@ mainInterface users = do
                   putStrLn "Erro: Saldo devedor inválido. Deve ser um número."
                   mainInterface users
                 Just sd -> do
-                  let newUsers = addUsuario (User uid nome s sd) users'
+                  putStr "Senha do usuario: "
+                  hFlush stdout
+                  senhaInput <- getLine
+                  let newUsers = addUsuario (User uid nome s sd senhaInput) users'
                   salvaUsuario "./db/User.json" newUsers
                   putStrLn "Usuário adicionado."
                   putStrLn " "
@@ -82,11 +85,21 @@ mainInterface users = do
       putStr "Código identificador do usuário a ser removido: "
       hFlush stdout
       userid <- readLn :: IO Integer
-      let newUsers = removeUsuario userid users'
-      salvaUsuario "./db/User.json" newUsers
-      putStrLn "Usuário removido."
-      putStrLn " "
-      mainInterface newUsers
+      putStr "Senha do usuario para confirmacao: "
+      hFlush stdout
+      usenha <- getLine :: IO String
+      let newUsers = removeUsuario userid usenha users'
+      case newUsers of
+        Nothing -> do
+          putStrLn "Erro: Usuário não existe ou senha invalida!"
+          putStrLn " "
+          mainInterface users
+        Just nu -> do
+          salvaUsuario "./db/User.json" nu
+          putStrLn "Usuário removido."
+          putStrLn " "
+          mainInterface nu
+          
 
     "4" -> do
       putStr "Código identificador do usuário remetente: "
@@ -98,7 +111,10 @@ mainInterface users = do
       putStr "Valor a ser transferido: "
       hFlush stdout
       amount <- readLn :: IO Float
-      let result = transferirSaldo fromId toId amount users
+      putStr "Senha do usuario remetente para confirmacao: "
+      hFlush stdout
+      usenha <- getLine :: IO String
+      let result = transferirSaldo fromId usenha toId amount users
       case result of
         Left err -> do
           putStrLn err
