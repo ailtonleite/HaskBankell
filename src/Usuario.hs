@@ -1,4 +1,4 @@
-module Usuario (User(..), addUsuario, removeUsuario, carregaArquivo, salvaUsuario, transferirSaldo) where
+module Usuario (User(..), addUsuario, removeUsuario, carregaArquivo, salvaUsuario, transferirSaldo, transferirParcelado, pagamentoParcelado) where
 
 import Data.List (find, delete)
 import Data.Maybe (isJust, fromJust, isNothing)
@@ -73,3 +73,39 @@ transferirSaldo fromId usenha toId amount users
       | otherwise = user
 
 -- transferir parcelado** (para a segunda parte)
+transferirParcelado :: Integer -> String -> Integer -> Float -> [User] -> Either String [User]
+transferirParcelado fromId usenha toId amount users
+  | amount <= 0 = Left $ "Erro: O valor da transferência deve ser maior que zero."
+  | isNothing fromUser = Left $ "Erro: Usuário remetente com ID " ++ show fromId ++ " não encontrado."
+  | isNothing toUser = Left $ "Erro: Usuário destinatário com ID " ++ show toId ++ " não encontrado."
+  | not (senhaCorreta fromUser) = Left $ "Erro: Senha incorreta para o usuário remetente."
+  | saldoDevedor (fromJust fromUser) > 0 = Left $ "Erro: Usuário já possui saldo devedor e não poderá realizar uma nova transferencia"
+  | otherwise = Right updatedUsers
+  where
+    fromUser = find (\x -> userid x == fromId) users
+    toUser = find (\x -> userid x == toId) users
+    senhaCorreta user = hashSenha usenha == senha (fromJust user)
+    updatedUsers = map updateUser users
+
+    updateUser user
+      | userid user == fromId = user { saldoDevedor = saldoDevedor user + amount }
+      | userid user == toId = user { saldo = saldo user + amount }
+      | otherwise = user
+
+pagamentoParcelado :: Integer -> String -> Float -> [User] -> Either String [User]
+pagamentoParcelado fromId usenha amount users
+  | isNothing fromUser = Left $ "Erro: Usuário remetente com ID " ++ show fromId ++ " não encontrado."
+  | not (senhaCorreta fromUser) = Left $ "Erro: Senha incorreta para o usuário remetente."
+  | saldoDevedor (fromJust fromUser) <= 0 = Left $ "Erro: Usuário não possui saldo devedor em sua conta"
+  | amount < valorMinimo fromUser =  Left $ "Erro: Pagamento minimo deve ser no valor de " ++  show (valorMinimo fromUser)
+  | otherwise = Right updatedUsers
+  where
+    fromUser = find (\x -> userid x == fromId) users
+    senhaCorreta user = hashSenha usenha == senha (fromJust user)
+    valorMinimo user = saldoDevedor (fromJust user) * 0.1
+    updatedUsers = map updateUser users
+
+    updateUser user
+      | userid user == fromId = user { saldo = saldo user - amount, saldoDevedor = saldoDevedor user - amount }
+      | otherwise = user
+      
