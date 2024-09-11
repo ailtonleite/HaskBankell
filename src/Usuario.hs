@@ -108,3 +108,4 @@ pagamentoParcelado fromId usenha amount users
     updateUser user
       | userid user == fromId = user { saldo = saldo user - amount, saldoDevedor = saldoDevedor user - amount }
       | otherwise = user
+      

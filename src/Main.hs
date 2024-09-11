@@ -21,6 +21,7 @@ printMenu = do
   putStrLn "-- 🕴 HaskBankell - UFABC 🕴 --"
   putStrLn " "
 
+
 -- aqui ficara a interface
 -- OBS:
 -- Alguns dos recursos como "mapM" para listagem dos itens da lista, pre-carregamento
