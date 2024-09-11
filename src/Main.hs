@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Usuario (addUsuario, removeUsuario, User(User), carregaArquivo, salvaUsuario, transferirSaldo)
+import Usuario (addUsuario, removeUsuario, User(User), carregaArquivo, salvaUsuario, transferirSaldo, transferirParcelado, pagamentoParcelado)
 import System.IO (hFlush, stdout)
 import Data.Maybe
 import Text.Read (readMaybe)
@@ -15,8 +15,10 @@ printMenu = do
   putStrLn "2 - Exibir usuários"
   putStrLn "3 - Remover usuário"
   putStrLn "4 - Transferir saldo"
-  putStrLn "5 - Sair"
-  putStrLn "-- HaskBankell - UFABC --"
+  putStrLn "5 - Transferir parcelado"
+  putStrLn "6 - Pagamento parcelado"
+  putStrLn "7 - Sair"
+  putStrLn "-- 🕴 HaskBankell - UFABC 🕴 --"
   putStrLn " "
 
 -- aqui ficara a interface
@@ -100,7 +102,6 @@ mainInterface users = do
           putStrLn " "
           mainInterface nu
           
-
     "4" -> do
       putStr "Código identificador do usuário remetente: "
       hFlush stdout
@@ -126,8 +127,55 @@ mainInterface users = do
           mainInterface newUsers
 
     "5" -> do
+      putStr "Código identificador do usuário remetente: "
+      hFlush stdout
+      fromId <- readLn :: IO Integer
+      putStr "Código identificador do usuário destinatário: "
+      hFlush stdout
+      toId <- readLn :: IO Integer
+      putStr "Valor a ser transferido: "
+      hFlush stdout
+      amount <- readLn :: IO Float
+      putStr "Senha do usuario remetente para confirmacao: "
+      hFlush stdout
+      usenha <- getLine :: IO String
+      let result = transferirParcelado fromId usenha toId amount users
+      case result of
+        Left err -> do
+          putStrLn err
+          mainInterface users
+        Right newUsers -> do
+          salvaUsuario "./db/User.json" newUsers
+          putStrLn "Transferência parcelada realizada com sucesso."
+          putStrLn " "
+          mainInterface newUsers
+
+    "6" -> do
+      putStr "Código identificador do usuário: "
+      hFlush stdout
+      fromId <- readLn :: IO Integer
+      putStr "Valor a ser pago (Valor minimo permitido: 10% do saldo devedor): "
+      hFlush stdout
+      amount <- readLn :: IO Float
+      putStr "Senha do usuario para confirmacao: "
+      hFlush stdout
+      usenha <- getLine :: IO String
+      let result = pagamentoParcelado fromId usenha amount users
+      case result of
+        Left err -> do
+          putStrLn err
+          mainInterface users
+        Right newUsers -> do
+          salvaUsuario "./db/User.json" newUsers
+          putStrLn "Pagamento realizada com sucesso."
+          putStrLn " "
+          mainInterface newUsers
+
+    "7" -> do
       putStrLn "Saindo..."
       return ()
+
+-- Você encontrou o 'homem de terno levitando' 🕴
 
     _ -> do
       putStrLn "Erro: Opção inválida"
