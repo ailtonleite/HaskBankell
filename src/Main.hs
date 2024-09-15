@@ -24,15 +24,16 @@ data AppState = AppState
   , transferValue  :: Maybe Float
   , successMessage :: String
   , delayTime      :: Float
+  , tempPassword   :: String
   }
 
-data State = MainMenu | AddUserID | AddUserName | AddUserSaldo | RemoveUser | TransferSaldo | TransferSenderID | TransferValue | TransferReceiverID | TransferParceladoSenderID | TransferParceladoValue | TransferParceladoReceiverID | PagamentoParceladoID | PagamentoParceladoValue | ExibirUsuarios | ExitApp | SuccessMessageState | QuitState deriving (Eq)
+data State = MainMenu | AddUserID | AddUserName | AddUserSaldo | AddUserPassword | RemoveUser | RemoveUserPassword | TransferSaldo | TransferSenderID | TransferValue | TransferReceiverID | TransferPassword | TransferParceladoSenderID | TransferParceladoValue | TransferParceladoReceiverID | TransferParceladoPassword | PagamentoParceladoID | PagamentoParceladoPassword | PagamentoParceladoValue | ExibirUsuarios | ExitApp | SuccessMessageState | QuitState deriving (Eq)
 
 -- Funcao principal que inicia a aplicacao
 main :: IO ()
 main = do
   maybeUsers <- carregaArquivo "./db/User.json"
-  let initialState = AppState 0 (fromMaybe [] maybeUsers) "" MainMenu Nothing Nothing "" Nothing Nothing "" 0
+  let initialState = AppState 0 (fromMaybe [] maybeUsers) "" MainMenu Nothing Nothing "" Nothing Nothing "" 0 ""
   playIO
     (InWindow "HaskBankell - UFABC" (800, 600) (10, 10))
     (greyN 0.9)
@@ -51,15 +52,20 @@ renderMenu state = return $
         AddUserID -> renderAddUserID (inputText state)
         AddUserName -> renderAddUserName (inputText state)
         AddUserSaldo -> renderAddUserSaldo (inputText state)
+        AddUserPassword -> renderAddUserPassword (inputText state)
         RemoveUser -> renderRemoveUser (inputText state) (successMessage state)
+        RemoveUserPassword -> renderRemoveUserPassword (inputText state)
         TransferSaldo -> renderTransferSaldo (inputText state)
         TransferSenderID -> renderTransferSenderID (inputText state)
         TransferValue -> renderTransferValue (inputText state)
         TransferReceiverID -> renderTransferReceiverID (inputText state)
+        TransferPassword -> renderTransferPassword (inputText state)
         TransferParceladoSenderID -> renderTransferParceladoSenderID (inputText state)
         TransferParceladoValue -> renderTransferParceladoValue (inputText state)
         TransferParceladoReceiverID -> renderTransferParceladoReceiverID (inputText state)
+        TransferParceladoPassword -> renderTransferParceladoPassword (inputText state)
         PagamentoParceladoID -> renderPagamentoParceladoID (inputText state)
+        PagamentoParceladoPassword -> renderPagamentoParceladoPassword (inputText state)
         PagamentoParceladoValue -> renderPagamentoParceladoValue (inputText state)
         ExibirUsuarios -> renderExibirUsuarios (users state)
         SuccessMessageState -> renderSuccessMessage (successMessage state)
@@ -172,6 +178,41 @@ renderTransferSaldo input = pictures
   , translate (-350) 50  . scale 0.3 0.3 . color black $ text input
   ]
 
+renderAddUserPassword :: String -> Picture
+renderAddUserPassword input = pictures
+  [ translate (-350) 200 . scale 0.3 0.3 . color black $ text "Adicionando usuario"
+  , translate (-350) 150 . scale 0.3 0.3 . color black $ text "Insira a senha do usuario: "
+  , translate (-350) 50  . scale 0.3 0.3 . color black $ text input
+  ]
+
+renderRemoveUserPassword :: String -> Picture
+renderRemoveUserPassword input = pictures
+  [ translate (-350) 200 . scale 0.3 0.3 . color black $ text "Removendo usuario"
+  , translate (-350) 150 . scale 0.3 0.3 . color black $ text "Insira a senha do usuario: "
+  , translate (-350) 50  . scale 0.3 0.3 . color black $ text input
+  ]
+
+renderTransferPassword :: String -> Picture
+renderTransferPassword input = pictures
+  [ translate (-350) 200 . scale 0.3 0.3 . color black $ text "Transferindo saldo"
+  , translate (-350) 150 . scale 0.3 0.3 . color black $ text "Insira a senha do remetente: "
+  , translate (-350) 50  . scale 0.3 0.3 . color black $ text input
+  ]
+
+renderTransferParceladoPassword :: String -> Picture
+renderTransferParceladoPassword input = pictures
+  [ translate (-350) 200 . scale 0.3 0.3 . color black $ text "Transferencia Parcelada"
+  , translate (-350) 150 . scale 0.3 0.3 . color black $ text "Insira a senha do remetente: "
+  , translate (-350) 50  . scale 0.3 0.3 . color black $ text input
+  ]
+
+renderPagamentoParceladoPassword :: String -> Picture
+renderPagamentoParceladoPassword input = pictures
+  [ translate (-350) 200 . scale 0.3 0.3 . color black $ text "Pagamento Parcelado"
+  , translate (-350) 150 . scale 0.3 0.3 . color black $ text "Insira a senha do remetente: "
+  , translate (-350) 50  . scale 0.3 0.3 . color black $ text input
+  ]
+
 -- Funcao para exibir usuarios de forma compacta e clara
 renderExibirUsuarios :: [User] -> Picture
 renderExibirUsuarios users = pictures $
@@ -189,7 +230,7 @@ replaceInMessage other = other
 
 -- Formata cada usuario de maneira mais compacta
 formatUser :: User -> String
-formatUser (User uid nome saldo _ _) = "ID: " ++ show uid ++ " | Nome: " ++ nome ++ " | Saldo: " ++ show saldo
+formatUser (User uid nome saldo saldodevedor _) = "ID: " ++ show uid ++ " | Nome: " ++ nome ++ " | Saldo: " ++ show saldo ++ " | SaldoDevedor: " ++ show saldodevedor
 
 -- Funcao que lida com eventos, incluindo cliques do mouse
 handleEvent :: Event -> AppState -> IO AppState
@@ -198,7 +239,7 @@ handleEvent (EventKey (MouseButton LeftButton) Down _ (x, y)) state
   | currentState state == MainMenu = handleMouseClick x y state
   | otherwise = return state
 handleEvent (EventKey (Char c) Down _ _) state
-  | currentState state `elem` [AddUserID, AddUserName, AddUserSaldo, RemoveUser, TransferSenderID, TransferValue, TransferReceiverID, TransferParceladoSenderID, TransferParceladoValue, TransferParceladoReceiverID, PagamentoParceladoID, PagamentoParceladoValue]
+  | currentState state `elem` [AddUserID, AddUserName, AddUserSaldo, AddUserPassword, RemoveUser, RemoveUserPassword, TransferSenderID, TransferValue, TransferReceiverID, TransferPassword, TransferParceladoSenderID, TransferParceladoValue, TransferParceladoReceiverID, TransferParceladoPassword, PagamentoParceladoID, PagamentoParceladoPassword, PagamentoParceladoValue]
   = return state { inputText = inputText state ++ [c] }
 handleEvent (EventKey (SpecialKey KeyBackspace) Down _ _) state =
   return state { inputText = if null (inputText state) then "" else init (inputText state) }
@@ -234,22 +275,26 @@ handleEnterPress state =
     AddUserSaldo -> do
       case readMaybe (inputText state) :: Maybe Float of
         Nothing -> return state { inputText = "Erro: Saldo invalido", currentState = SuccessMessageState, successMessage = "Erro: Saldo invalido", delayTime = 3 }
-        Just saldo -> do
-          let newUser = User (fromMaybe 0 (tempUserId state)) (tempUserName state) saldo 0 "senha"
-          let updatedUsers = addUsuario newUser (users state)
-          salvaUsuario "./db/User.json" updatedUsers
-          return state { users = updatedUsers, inputText = "", currentState = MainMenu }
+        Just saldo -> return state { tempUserSaldo = Just saldo, inputText = "", currentState = AddUserPassword }
+
+    AddUserPassword -> do
+      let newUser = User (fromMaybe 0 (tempUserId state)) (tempUserName state) (fromMaybe 0 (tempUserSaldo state)) 0 (inputText state)
+      let updatedUsers = addUsuario newUser (users state)
+      salvaUsuario "./db/User.json" updatedUsers
+      return state { users = updatedUsers, inputText = "", currentState = MainMenu }
 
     RemoveUser -> do
       case readMaybe (inputText state) :: Maybe Integer of
         Nothing -> return state { inputText = "Erro: ID invalido", successMessage = "Erro: ID invalido", delayTime = 3, currentState = SuccessMessageState }
-        Just userId -> do
-          let updatedUsers = removeUsuario userId "senha" (users state)
-          case updatedUsers of
-            Nothing -> return state { inputText = "Erro: Usuario nao encontrado", currentState = SuccessMessageState, successMessage = "Erro: Usuario nao encontrado", delayTime = 3 }
-            Just newUsers -> do
-              salvaUsuario "./db/User.json" newUsers
-              return state { users = newUsers, inputText = "Usuario removido com sucesso", currentState = SuccessMessageState, successMessage = "Usuario removido com sucesso", delayTime = 3 }
+        Just userId -> return state { tempUserId = Just userId, inputText = "", currentState = RemoveUserPassword }
+
+    RemoveUserPassword -> do
+      let updatedUsers = removeUsuario (fromMaybe 0 (tempUserId state)) (inputText state) (users state)
+      case updatedUsers of
+        Nothing -> return state { inputText = "Erro: Usuario nao encontrado ou senha incorreta", currentState = SuccessMessageState, successMessage = "Erro: Usuario nao encontrado ou senha incorreta", delayTime = 3 }
+        Just newUsers -> do
+          salvaUsuario "./db/User.json" newUsers
+          return state { users = newUsers, inputText = "Usuario removido com sucesso", currentState = SuccessMessageState, successMessage = "Usuario removido com sucesso", delayTime = 3 }
 
     TransferSenderID -> do
       case readMaybe (inputText state) :: Maybe Integer of
@@ -272,13 +317,15 @@ handleEnterPress state =
           let userExists = any (\u -> getUserId u == receiverId) (users state)
           if not userExists
             then return state { inputText = "Erro: ID invalido", currentState = SuccessMessageState, successMessage = "Erro: ID invalido", delayTime = 3 }
-            else do
-              let updatedUsers = transferirSaldo (fromMaybe 0 (tempUserId state)) "senha" receiverId (fromMaybe 0 (transferValue state)) (users state)
-              case updatedUsers of
-                Left errMsg -> return state { inputText = errMsg, currentState = SuccessMessageState, successMessage = errMsg, delayTime = 3 }
-                Right users -> do
-                  salvaUsuario "./db/User.json" users
-                  return state { users = users, inputText = "Transferencia realizada com sucesso", currentState = SuccessMessageState, successMessage = "Transferencia realizada com sucesso", delayTime = 3 }
+            else return state { tempReceiverId = Just receiverId, inputText = "", currentState = TransferPassword }
+
+    TransferPassword -> do
+      let updatedUsers = transferirSaldo (fromMaybe 0 (tempUserId state)) (inputText state) (fromMaybe 0 (tempReceiverId state)) (fromMaybe 0 (transferValue state)) (users state)
+      case updatedUsers of
+        Left errMsg -> return state { inputText = errMsg, currentState = SuccessMessageState, successMessage = errMsg, delayTime = 3 }
+        Right users -> do
+          salvaUsuario "./db/User.json" users
+          return state { users = users, inputText = "Transferencia realizada com sucesso", currentState = SuccessMessageState, successMessage = "Transferencia realizada com sucesso", delayTime = 3 }
 
     TransferParceladoSenderID -> do
       case readMaybe (inputText state) :: Maybe Integer of
@@ -301,13 +348,15 @@ handleEnterPress state =
           let userExists = any (\u -> getUserId u == receiverId) (users state)
           if not userExists
             then return state { inputText = "Erro: ID invalido", currentState = SuccessMessageState, successMessage = "Erro: ID invalido", delayTime = 3 }
-            else do
-              let updatedUsers = transferirParcelado (fromMaybe 0 (tempUserId state)) "senha" receiverId (fromMaybe 0 (transferValue state)) (users state)
-              case updatedUsers of
-                Left errMsg -> return state { inputText = errMsg, currentState = SuccessMessageState, successMessage = errMsg, delayTime = 3 }
-                Right users -> do
-                  salvaUsuario "./db/User.json" users
-                  return state { users = users, inputText = "Transferencia parcelada realizada com sucesso", currentState = SuccessMessageState, successMessage = "Transferencia parcelada realizada com sucesso", delayTime = 3 }
+            else return state { tempReceiverId = Just receiverId, inputText = "", currentState = TransferParceladoPassword }
+
+    TransferParceladoPassword -> do
+      let updatedUsers = transferirParcelado (fromMaybe 0 (tempUserId state)) (inputText state) (fromMaybe 0 (tempReceiverId state)) (fromMaybe 0 (transferValue state)) (users state)
+      case updatedUsers of
+        Left errMsg -> return state { inputText = errMsg, currentState = SuccessMessageState, successMessage = errMsg, delayTime = 3 }
+        Right users -> do
+          salvaUsuario "./db/User.json" users
+          return state { users = users, inputText = "Transferencia parcelada realizada com sucesso", currentState = SuccessMessageState, successMessage = "Transferencia parcelada realizada com sucesso", delayTime = 3 }
 
     PagamentoParceladoID -> do
       case readMaybe (inputText state) :: Maybe Integer of
@@ -321,13 +370,15 @@ handleEnterPress state =
     PagamentoParceladoValue -> do
       case readMaybe (inputText state) :: Maybe Float of
         Nothing -> return state { inputText = "Erro: Valor nao e um numero", currentState = SuccessMessageState, successMessage = "Erro: Valor nao e um numero", delayTime = 3 }
-        Just value -> do
-          let updatedUsers = pagamentoParcelado (fromMaybe 0 (tempUserId state)) "senha" value (users state)
-          case updatedUsers of
-            Left errMsg -> return state { inputText = errMsg, currentState = SuccessMessageState, successMessage = errMsg, delayTime = 3 }
-            Right users -> do
-              salvaUsuario "./db/User.json" users
-              return state { users = users, inputText = "Pagamento parcelado realizado com sucesso", currentState = SuccessMessageState, successMessage = "Pagamento parcelado realizado com sucesso", delayTime = 3 }
+        Just value -> return state { transferValue = Just value, inputText = "", currentState = PagamentoParceladoPassword }
+
+    PagamentoParceladoPassword -> do
+      let updatedUsers = pagamentoParcelado (fromMaybe 0 (tempUserId state)) (inputText state) (fromMaybe 0 (transferValue state)) (users state)
+      case updatedUsers of
+        Left errMsg -> return state { inputText = errMsg, currentState = SuccessMessageState, successMessage = errMsg, delayTime = 3 }
+        Right users -> do
+          salvaUsuario "./db/User.json" users
+          return state { users = users, inputText = "Pagamento parcelado realizado com sucesso", currentState = SuccessMessageState, successMessage = "Pagamento parcelado realizado com sucesso", delayTime = 3 }
 
     ExibirUsuarios -> return state { currentState = MainMenu }
 
@@ -348,4 +399,4 @@ updateState dt state
 exitApp :: IO AppState
 exitApp = do
   putStrLn "Saindo..."
-  return $ AppState 0 [] "" QuitState Nothing Nothing "" Nothing Nothing "" 5
+  return $ AppState 0 [] "" QuitState Nothing Nothing "" Nothing Nothing "" 5 ""
