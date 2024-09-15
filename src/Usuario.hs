@@ -1,4 +1,4 @@
-module Usuario (User(..), addUsuario, removeUsuario, carregaArquivo, salvaUsuario, transferirSaldo) where
+module Usuario (User(..), addUsuario, removeUsuario, carregaArquivo, salvaUsuario, transferirSaldo, transferirParcelado, pagamentoParcelado) where
 
 import Data.List (find, delete)
 import Data.Maybe (isJust, fromJust, isNothing)
@@ -11,7 +11,7 @@ import Crypto.Hash (hash, SHA256(..), Digest)
 
 data User = User { userid :: Integer, nome :: String, saldo :: Float, saldoDevedor :: Float, senha :: String } deriving (Show, Eq, Generic)
 
--- OBS: Para as funções de salvamento e garregamento de dados dos usuarios
+-- OBS: Para as funções de salvamento e carregamento de dados dos usuários
 -- em um arquivo, foi utilizado a lib aeson na qual seu funcionamento foi
 -- estudado via sua doc: https://hackage.haskell.org/package/aeson-2.2.3.0/docs/Data-Aeson.html
 -- Alguns exemplos de funcionamento também foram consultados via chatGPT para
@@ -72,4 +72,40 @@ transferirSaldo fromId usenha toId amount users
       | userid user == toId = user { saldo = saldo user + amount }
       | otherwise = user
 
--- transferir parcelado** (para a segunda parte)
+-- Função para transferir saldo parcelado
+transferirParcelado :: Integer -> String -> Integer -> Float -> [User] -> Either String [User]
+transferirParcelado fromId usenha toId amount users
+  | amount <= 0 = Left $ "Erro: O valor da transferência deve ser maior que zero."
+  | isNothing fromUser = Left $ "Erro: Usuário remetente com ID " ++ show fromId ++ " não encontrado."
+  | isNothing toUser = Left $ "Erro: Usuário destinatário com ID " ++ show toId ++ " não encontrado."
+  | not (senhaCorreta fromUser) = Left $ "Erro: Senha incorreta para o usuário remetente."
+  | saldoDevedor (fromJust fromUser) > 0 = Left $ "Erro: Usuário já possui saldo devedor e não poderá realizar uma nova transferência."
+  | otherwise = Right updatedUsers
+  where
+    fromUser = find (\x -> userid x == fromId) users
+    toUser = find (\x -> userid x == toId) users
+    senhaCorreta user = hashSenha usenha == senha (fromJust user)
+    updatedUsers = map updateUser users
+
+    updateUser user
+      | userid user == fromId = user { saldoDevedor = saldoDevedor user + amount }
+      | userid user == toId = user { saldo = saldo user + amount }
+      | otherwise = user
+
+-- Função para pagamento parcelado
+pagamentoParcelado :: Integer -> String -> Float -> [User] -> Either String [User]
+pagamentoParcelado fromId usenha amount users
+  | isNothing fromUser = Left $ "Erro: Usuário remetente com ID " ++ show fromId ++ " não encontrado."
+  | not (senhaCorreta fromUser) = Left $ "Erro: Senha incorreta para o usuário remetente."
+  | saldoDevedor (fromJust fromUser) <= 0 = Left $ "Erro: Usuario nao possui saldo devedor"
+  | amount < valorMinimo fromUser =  Left $ "Erro: Pagamento minimo deve ser " ++ show (valorMinimo fromUser)
+  | otherwise = Right updatedUsers
+  where
+    fromUser = find (\x -> userid x == fromId) users
+    senhaCorreta user = hashSenha usenha == senha (fromJust user)
+    valorMinimo user = saldoDevedor (fromJust user) * 0.1
+    updatedUsers = map updateUser users
+
+    updateUser user
+      | userid user == fromId = user { saldo = saldo user - amount, saldoDevedor = saldoDevedor user - amount }
+      | otherwise = user

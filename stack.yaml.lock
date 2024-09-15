@@ -3,11 +3,24 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: OpenGLRaw-3.3.4.1@sha256:01b745fbd269fc96d982c3c915c5559793457ff02f9f6cce3ee259aed97378f1,26636
+    pantry-tree:
+      sha256: c52f3a35c498afac5edfa5f68d3817c54e246eacd7ca7a0a1a0b49e5262049a8
+      size: 48782
+  original:
+    hackage: OpenGLRaw-3.3.4.1
+- completed:
+    hackage: half-0.3.1@sha256:b6b9ac2dbb6f58e1619683db43d851cc25086aecaf0925a3b6a74b1a1b17db07,2158
+    pantry-tree:
+      sha256: 9b885fcc89341eb374f7e74c89bc38825e22b7180143e9cab61fdf07ead7bc6a
+      size: 502
+  original:
+    hackage: half-0.3.1
 snapshots:
 - completed:
     sha256: 795b7a893148a42f09956611a0fa1139293fe6ef934d053468d8e53e3e013390
     size: 719577
     url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/22/30.yaml
-  original:
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/22/30.yaml
+  original: lts-22.30
