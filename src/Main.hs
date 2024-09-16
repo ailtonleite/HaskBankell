@@ -230,7 +230,7 @@ replaceInMessage other = other
 
 -- Formata cada usuario de maneira mais compacta
 formatUser :: User -> String
-formatUser (User uid nome saldo saldodevedor _) = "ID: " ++ show uid ++ " | Nome: " ++ nome ++ " | Saldo: " ++ show saldo ++ " | SaldoDevedor: " ++ show saldodevedor
+formatUser (User uid nome saldo saldodevedor _) = "ID: " ++ show uid ++ " |"++ nome ++ " |Saldo: " ++ show saldo ++ " |Divida: " ++ show saldodevedor
 
 -- Funcao que lida com eventos, incluindo cliques do mouse
 handleEvent :: Event -> AppState -> IO AppState

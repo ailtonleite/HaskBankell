@@ -46,12 +46,12 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
-bindir     = "/home/fabricio/\193rea de trabalho/HaskBankell(1)/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/bin"
-libdir     = "/home/fabricio/\193rea de trabalho/HaskBankell(1)/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/lib/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0-JJOeIKNtmKTBDEQdHcptcw-projeto-hsl"
-dynlibdir  = "/home/fabricio/\193rea de trabalho/HaskBankell(1)/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/lib/x86_64-linux-ghc-9.6.6"
-datadir    = "/home/fabricio/\193rea de trabalho/HaskBankell(1)/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/share/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"
-libexecdir = "/home/fabricio/\193rea de trabalho/HaskBankell(1)/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/libexec/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"
-sysconfdir = "/home/fabricio/\193rea de trabalho/HaskBankell(1)/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/etc"
+bindir     = "/home/fabricio/\193rea de trabalho/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/bin"
+libdir     = "/home/fabricio/\193rea de trabalho/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/lib/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0-JJOeIKNtmKTBDEQdHcptcw-projeto-hsl"
+dynlibdir  = "/home/fabricio/\193rea de trabalho/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/lib/x86_64-linux-ghc-9.6.6"
+datadir    = "/home/fabricio/\193rea de trabalho/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/share/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"
+libexecdir = "/home/fabricio/\193rea de trabalho/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/libexec/x86_64-linux-ghc-9.6.6/projeto-hsl-0.1.0.0"
+sysconfdir = "/home/fabricio/\193rea de trabalho/HaskBankell/.stack-work/install/x86_64-linux-tinfo6/07511837364506c95cdd3e1261bf7eb479860136c893d3361906690b05e6c660/9.6.6/etc"
 
 getBinDir     = catchIO (getEnv "projeto_hsl_bindir")     (\_ -> return bindir)
 getLibDir     = catchIO (getEnv "projeto_hsl_libdir")     (\_ -> return libdir)
