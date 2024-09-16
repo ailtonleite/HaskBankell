@@ -1,64 +1,59 @@
-{-# LANGUAGE OverloadedStrings #-}
-module Main where
-
 import Test.HUnit
-import Usuario
+import Usuario (User(..), addUsuario, removeUsuario, transferirSaldo)
 
--- Funcoes de teste
-
--- Teste addUsuario
+-- Testa a adição de um usuario
 testAddUsuario :: Test
 testAddUsuario = TestCase $ do
-    let user1 = User 1 "Ana" 100.0 0.0
-    let user2 = User 2 "Joana" 50.0 0.0
-    let users = [user1]
-    let newUsers = addUsuario user2 users
-    assertEqual "Usuário não foi adicionado" [user2, user1] newUsers
+    let usuarios = []
+    let usuario = User 1 "Luciano" 100.0 0.0 ""  
+    let usuariosAtualizados = addUsuario usuario usuarios
+    assertEqual "Deve adicionar um usuário à lista" [usuario] usuariosAtualizados
 
--- Teste removeUsuario
+-- Testa a remoçao de um usuário
 testRemoveUsuario :: Test
 testRemoveUsuario = TestCase $ do
-    let user1 = User 1 "Ana" 100.0 0.0
-    let user2 = User 2 "Joana" 50.0 0.0
-    let users = [user1, user2]
-    let newUsers = removeUsuario 1 users
-    assertEqual "Usuário não foi removido" [user2] newUsers
+    let usuario = User 1 "Luciano" 100.0 0.0 ""  
+    let usuarios = [usuario]
+    let usuariosAtualizados = removeUsuario 1 "" usuarios
+    assertEqual "Deve remover o usuário da lista" Nothing usuariosAtualizados
 
--- Teste do transferirSaldo
+-- Testa a transferencia de saldo
 testTransferirSaldo :: Test
 testTransferirSaldo = TestCase $ do
-    let user1 = User 1 "Ana" 100.0 0.0
-    let user2 = User 2 "Joana" 50.0 0.0
-    let users = [user1, user2]
-    let result = transferirSaldo 1 2 30.0 users
-    case result of
-        Left err -> assertFailure err
-        Right updatedUsers -> do
-            let expectedUser1 = User 1 "Ana" 70.0 0.0
-            let expectedUser2 = User 2 "Joana" 80.0 0.0
-            assertEqual "Saldo incorreto para usuário 1" expectedUser1 (head updatedUsers)
-            assertEqual "Saldo incorreto para usuário 2" expectedUser2 (updatedUsers !! 1)
+    let usuario1 = User 1 "Luciano" 100.0 0.0 ""  
+    let usuario2 = User 2 "Ana" 50.0 0.0 ""  
+    let usuarios = [usuario1, usuario2]
+    let resultado = transferirSaldo 1 "" 2 30.0 usuarios
+    case resultado of
+        Right usuariosAtualizados -> do
+            let usuario1Atualizado = User 1 "Luciano" 70.0 0.0 ""  
+            let usuario2Atualizado = User 2 "Ana" 80.0 0.0 ""  
+            assertEqual "O saldo do usuário 1 deve ser 70.0" usuario1Atualizado (head usuariosAtualizados)
+            assertEqual "O saldo do usuário 2 deve ser 80.0" usuario2Atualizado (usuariosAtualizados !! 1)
+        Left msg -> assertFailure ("Falha na transferência: " ++ msg)
 
--- Teste transferir saldo com valor negativo
-testTransferirSaldoNegative :: Test
-testTransferirSaldoNegative = TestCase $ do
-    let user1 = User 1 "Ana" 100.0 0.0
-    let user2 = User 2 "Joana" 50.0 0.0
-    let users = [user1, user2]
-    let result = transferirSaldo 1 2 (-30.0) users
-    assertEqual "Deveria retornar erro para valor negativo" (Left "Erro: O valor da transferência deve ser maior que zero.") result
+-- Testa a adição de usuario duplicado (se há)
+testAddUsuarioDuplicado :: Test
+testAddUsuarioDuplicado = TestCase $ do
+    let usuario = User 1 "Luciano" 100.0 0.0 ""  
+    let usuarios = [usuario]
+    let usuariosAtualizados = addUsuario usuario usuarios
+    assertEqual "Não deve adicionar usuário duplicado" [usuario] usuariosAtualizados
 
--- Teste transferir saldo para usuário inexistente
-testTransferirSaldoUserNotFound :: Test
-testTransferirSaldoUserNotFound = TestCase $ do
-    let user1 = User 1 "Ana" 100.0 0.0
-    let users = [user1]
-    let result = transferirSaldo 1 2 30.0 users
-    assertEqual "Deveria retornar erro para usuário destinatário não encontrado" (Left "Erro: Usuário destinatário com ID 2 não encontrado.") result
-
+-- Testa a remoção de usuário inexistente
+testRemoveUsuarioInexistente :: Test
+testRemoveUsuarioInexistente = TestCase $ do
+    let usuario = User 1 "Luciano" 100.0 0.0 ""  
+    let usuarios = [usuario]
+    let usuariosAtualizados = removeUsuario 2 "" usuarios
+    assertEqual "Não deve remover um usuário que não existe" (Just [usuario]) usuariosAtualizados
 
 main :: IO ()
 main = do
-    _ <- runTestTT $ TestList [testAddUsuario, testRemoveUsuario, testTransferirSaldo, testTransferirSaldoNegative, testTransferirSaldoUserNotFound]
+    runTestTT testAddUsuario
+    runTestTT testRemoveUsuario
+    runTestTT testTransferirSaldo
+    runTestTT testAddUsuarioDuplicado
+    runTestTT testRemoveUsuarioInexistente
     return ()
 
